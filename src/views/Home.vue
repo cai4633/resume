@@ -152,9 +152,9 @@
     data(){
       return {
         classList:["state1"],
-        portfolioWork1:'/statics/images/work1.jpg',
-        portfolioWork2:'/statics/images/work2.jpg',
-        portfolioWork3:'/statics/images/work3.jpg',
+        portfolioWork1:'./statics/images/work1.jpg',
+        portfolioWork2:'./statics/images/work2.jpg',
+        portfolioWork3:'./statics/images/work3.jpg',
 
       };
    }
