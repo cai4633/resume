@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <div class="loading loading-active" id='loading'></div>
     <header>
       <div class="banner"></div>
       <div class="header-inner clearfix">
@@ -157,8 +158,14 @@
         portfolioWork3:'./statics/images/work3.jpg',
 
       };
+   },
+   mounted(){
+     let timeout1 = setTimeout(() => {
+       loading.classList.remove('loading-active')
+     },1500)
    }
 };
+
 </script>
 
 <style type="text/css" scoped>
@@ -175,8 +182,49 @@
 .home
 // variable
   $max-width = 940px
-
   background-color rgb(239,239,239)
+  .loading
+    display none
+  .loading-active
+    display block
+    position fixed
+    width 100%
+    height 100%
+    background-color #888
+    z-index 1
+    
+    before()
+      content ''
+      display inline-block
+      position absolute
+      width 0
+      height @width
+      border-radius 50%
+      top 0
+      bottom 0
+      left 0
+      right 0 
+      margin auto
+      animation loading 2s infinite
+      background-color #000
+    &::before
+      before()
+    &::after
+      before()
+      animation-delay 1s
+    @keyframes loading {
+      0%  {
+        width 0
+        height 0
+        opacity 1
+      }
+      100% {
+        width 40px
+        height @width
+        opacity 0
+      }
+    }
+    
   header
     .banner
       width 100%
