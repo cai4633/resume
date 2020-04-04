@@ -3,16 +3,16 @@
     <div class="loading loading-active" id='loading'></div>
     <header>
       <div class="banner"></div>
-      <div class="header-inner clearfix">
+      <div class="header-inner clearfix" id='headerInner'>
         <a href="#" class="logo"><span>RS</span>card</a>
         <nav>
           <ul class="clearfix">
-            <li><a href="javascipt:;">关于</a></li>
-            <li><a href="#skill">技能</a></li>
-            <li><a href="#portfolio">作品</a></li>
+            <li><a href="#profile" class="active slideSlowly">关于</a></li>
+            <li><a href="#skill" class="slideSlowly">技能</a></li>
+            <li><a href="#portfolio" class="slideSlowly">作品</a></li>
             <li><a href="https://caijd.top" target="_blank">博客</a></li>
             <li><a href="javascript:;">日历</a></li>
-            <li><a href="#profile">联系方式</a></li>
+            <li><a href="#profile" class="slideSlowly">联系方式</a></li>
             <li><a href="javascript:;">其他</a></li>
           </ul>
         </nav>
@@ -147,6 +147,7 @@
 
 <script>
   // @ is an alias to /src
+  import TWEEN from '@tweenjs/tween.js'
   export default {
     name: "home",
     components: {},
@@ -160,9 +161,90 @@
       };
    },
    mounted(){
+    //  加入loading动画
      let timeout1 = setTimeout(() => {
        loading.classList.remove('loading-active')
      },1500)
+  
+    window.onscroll= function(e){
+      addStickyBar()    // sticky navbar
+    }
+
+    addSlideSlowlyToNavByTween()
+
+    // sticky navbar
+    function addStickyBar(){
+      if(window.scrollY > 0){
+        headerInner.classList.add('scroll')
+      }else{
+        headerInner.classList.remove('scroll')
+      }      
+    }
+
+    //为导航条添加点击事件 
+    function addSlideSlowlyToNavByTween(){
+      let slideList = document.querySelectorAll('.slideSlowly')
+      for(let i = 0;i < slideList.length; i++){
+        slideList[i].addEventListener('click',(e)=>{
+          e.preventDefault()
+          let target = document.querySelector(e.currentTarget.getAttribute('href'))
+          let distance = target.offsetTop -80
+
+        function animate(time) {
+            requestAnimationFrame(animate);
+            TWEEN.update(time);
+        }
+        requestAnimationFrame(animate);
+        const coords = { x: 0, y: window.scrollY }; // Start at (0, 0)
+        const tween = new TWEEN.Tween(coords) // Create a new tween that modifies 'coords'.
+                .to({ x: 0, y: distance}, 1000) // Move to (300, 200) in 1 second.
+                .easing(TWEEN.Easing.Circular.Out ) // Use an easing function to make the animation smooth.
+                .onUpdate(() => { // Called after tween.js updates 'coords'.
+                  window.scrollTo(coords.x,coords.y)
+                })
+                .start(); // Start the tween immediately.
+
+        })
+      }
+
+
+      let aList = document.querySelectorAll('#headerInner>nav>ul>li>a')
+      Array.prototype.forEach.call(aList,(item) => {
+        item.addEventListener('click',(e) => {
+          Array.prototype.forEach.call(aList,(item) => { item.classList.remove('active') })
+          e.currentTarget.classList.add('active')
+        })
+      })      
+    }
+    function addSlideSlowlyToNavByJs(){
+      let slideList = document.querySelectorAll('.slideSlowly')
+      for(let i = 0;i < slideList.length; i++){
+        slideList[i].addEventListener('click',(e)=>{
+          e.preventDefault()
+          let target = document.querySelector(e.currentTarget.getAttribute('href'))
+          let distance = target.offsetTop - window.scrollY -80
+          let n = 60    //动画帧数
+          let time = 1000 //动画时间
+          let m = 1 //计数
+          let interval = setInterval(() => {
+            if(m > n) {
+              clearInterval(interval)
+              return;
+            }
+            window.scrollBy(0,distance/n)  
+            m++
+          },time/n)
+        })
+      }
+
+      let aList = document.querySelectorAll('#headerInner>nav>ul>li>a')
+      Array.prototype.forEach.call(aList,(item) => {
+        item.addEventListener('click',(e) => {
+          Array.prototype.forEach.call(aList,(item) => { item.classList.remove('active') })
+          e.currentTarget.classList.add('active')
+        })
+      })      
+    }
    }
 };
 
@@ -191,7 +273,7 @@
     width 100%
     height 100%
     background-color #888
-    z-index 1
+    z-index 10
     
     before()
       content ''
@@ -239,11 +321,21 @@
         background-color rgba(44, 51, 64,0.8)      
     .header-inner
       width 100%
-      padding-top  26px
+      padding-top  20px
+      padding-bottom 6px
       position fixed
       top 0 
       left 0 
-      background-color rgba(44, 51, 64,0.3) 
+      transition all 0.5s
+      z-index 1
+
+      &.scroll
+        background-color #fff
+        padding-top 14px
+        padding-bottom 0
+        box-shadow 0 0 20px 0px rgba(0,0,0,0.4) 
+        nav>ul>li>a
+          color #3d4451
       .logo
         float left
         margin-top 6px
@@ -266,6 +358,11 @@
             padding 12px 0px
             margin 0 14px
             // border-bottom 3px solid transparent     //防止hover时抖动
+            .active
+               &::after
+                content ''
+                display block
+                width 100%
             &>a
               color rgba(255, 255, 255, 0.7)
               &::after
