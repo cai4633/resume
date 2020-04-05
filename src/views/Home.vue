@@ -19,7 +19,7 @@
       </div>
     </header>
     <main>
-      <div class="profile" id="profile">
+      <div class="profile bounce" id="profile" data-x>
         <div class="profile-content clearfix">
           <div class="avatar">
             <img width="300" height="347" src="../assets/images/rs-photo-v1.jpg" alt="images lost"  />
@@ -80,7 +80,7 @@
         and customer relations.
       </p>      
     </main>
-    <section class="skill" id="skill">
+    <section class="skill bounce" id="skill" data-x>
       <h2>Professional Skills</h2>
       <ul class="clearfix">
         <li>
@@ -121,7 +121,7 @@
         </li>
       </ul>
     </section>
-    <section class="portfolio" id="portfolio">
+    <section class="portfolio bounce" id="portfolio" data-x>
       <h2>Portfolio</h2>
       <nav>
         <ul>
@@ -169,6 +169,7 @@
     window.onscroll= function(e){
       addStickyBar()    // sticky navbar
       let slideList = document.querySelectorAll('.slideSlowly')
+      let sections = document.querySelectorAll('[data-x]')
       let top =[]
       let current = 0
       top.forEach.call(slideList,(item,index,arr) => {
@@ -177,6 +178,10 @@
       })
       current = top.indexOf(Math.min.apply(null,top))       //get the minimum distance from view top to element
       slideList[current].classList.add('active')
+      top.forEach.call(sections,(item,index,arr) => {
+          item.classList.remove('bouncing')
+        })     
+      document.querySelector(slideList[current].getAttribute('href')).classList.add('bouncing')
       
     }
 
@@ -272,6 +277,12 @@
 <style lang="stylus" scoped>
 
 .home
+  .bounce
+    transition all 0.5s linear
+    transform translateY(20px)
+  .bouncing
+    transform translateY(0)
+
 // variable
   $max-width = 940px
   background-color rgb(239,239,239)
