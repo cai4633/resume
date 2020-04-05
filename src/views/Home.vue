@@ -168,6 +168,16 @@
   
     window.onscroll= function(e){
       addStickyBar()    // sticky navbar
+      let slideList = document.querySelectorAll('.slideSlowly')
+      let top =[]
+      let current = 0
+      top.forEach.call(slideList,(item,index,arr) => {
+        top[index] =  Math.abs(document.querySelector(item.getAttribute('href')).getBoundingClientRect().top)    //get the distances to view top
+        item.classList.remove('active')
+      })
+      current = top.indexOf(Math.min.apply(null,top))       //get the minimum distance from view top to element
+      slideList[current].classList.add('active')
+      
     }
 
     addSlideSlowlyToNavByTween()
