@@ -138,6 +138,7 @@
         </li>
       </ul>
     </section>
+
     <section class="portfolio bounce" id="portfolio" data-x>
       <h2>Portfolio</h2>
       <nav>
@@ -154,6 +155,7 @@
         <swiper :auto-update="true" :auto-destroy="true" :delete-instance-on-destroy="true" :cleanup-styles-on-destroy="true" />
       </div>
     </section>
+    <Message></Message>
   </div>
 </template>
 
@@ -161,9 +163,10 @@
 // @ is an alias to /src
 import TWEEN from "@tweenjs/tween.js";
 import Swiper from './Swiper.vue'
+import Message from './Message.vue'
 export default {
   name: "home",
-  components: {Swiper},
+  components: {Swiper,Message},
   data() {
     return {
       classList: ["state1"],
