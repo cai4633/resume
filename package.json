@@ -11,7 +11,9 @@
     "core-js": "^2.6.5",
     "jquery": "^3.5.0",
     "leancloud-storage": "^4.5.3",
+    "swiper": "^5.3.7",
     "vue": "^2.6.10",
+    "vue-awesome-swiper": "^4.1.1",
     "vue-router": "^3.0.3"
   },
   "devDependencies": {

@@ -151,19 +151,7 @@
         </div>
       </nav>
       <div class="content clearfix">
-        <div class="left">
-          <div class="work">
-            <img :src="portfolioWork1" width="610" height="580" alt="作品" />
-          </div>
-        </div>
-        <div class="right">
-          <div class="work">
-            <img :src="portfolioWork2" width="289" height="280" alt="作品" />
-          </div>
-          <div class="work">
-            <img :src="portfolioWork3" width="289" height="280" alt="作品" />
-          </div>
-        </div>
+        <swiper :auto-update="true" :auto-destroy="true" :delete-instance-on-destroy="true" :cleanup-styles-on-destroy="true" />
       </div>
     </section>
   </div>
@@ -172,13 +160,15 @@
 <script>
 // @ is an alias to /src
 import TWEEN from "@tweenjs/tween.js";
+import Swiper from './Swiper.vue'
 export default {
   name: "home",
-  components: {},
+  components: {Swiper},
   data() {
     return {
       classList: ["state1"],
       isScroll: false,
+      scrollFlag: 1,
       portfolioWork1: "./statics/images/work1.jpg",
       portfolioWork2: "./statics/images/work2.jpg",
       portfolioWork3: "./statics/images/work3.jpg"
@@ -196,6 +186,7 @@ export default {
         this.navActive()
     },
 
+    //window滚动事件
     windowBindEvent(e){
       this.addStickyBar(); // sticky navbar
       let $slideList = $(".slideSlowly");
@@ -206,7 +197,8 @@ export default {
         top[index] = Math.abs( $(item.getAttribute("href"))[0].getBoundingClientRect().top); //get the distances to view top
       });
       current = top.indexOf(Math.min.apply(null, top)); //get the minimum distance from view top to element
-      $slideList.removeClass("active").eq(current).addClass("active");
+      this.scrollFlag && $slideList.removeClass("active").eq(current).addClass("active");
+      console.log(this.scrollFlag)
       $sections.removeClass("bouncing");
       $($slideList.eq(current).attr("href")).addClass("bouncing");
     },
@@ -220,33 +212,42 @@ export default {
           e.preventDefault();
           let $target = $( $(e.currentTarget).attr("href") );
           let distance = $target.offset().top - 90;
-
-          function animate(time) {
-            requestAnimationFrame(animate);
-            TWEEN.update(time);
-          }
-          requestAnimationFrame(animate);
-
-          const coords = { x: 0, y: window.scrollY}; // Start at (0, 0)
-          const tween = new TWEEN.Tween(coords) // Create a new tween that modifies 'coords'.
-            .to({ x: 0, y: distance}, 1500) // Move to (300, 200) in 1 second.
-            .easing(TWEEN.Easing.Circular.Out) // Use an easing function to make the animation smooth.
-            .onUpdate(() => {
-              // Called after tween.js updates 'coords'.
-              window.scrollTo(coords.x, coords.y);
-            })
-            .start(); // Start the tween immediately.
+          this.useTween({x:0,y:window.scrollY},{x:0,y:distance})
         });
     },
 
-    // 点击导航栏改变样式
-    navActive(){
-        $("#headerInner>nav>ul>li>a").on("click", (e) => {
-          e.preventDefault()
-          $(this).removeClass('active');
-          $(e.currentTarget).addClass("active") 
-        });
-    }
+      // 引用tweenjs
+      useTween(current,destination){
+        function animate(time) {
+          requestAnimationFrame(animate);
+          TWEEN.update(time);
+        }
+        requestAnimationFrame(animate);
+
+        const coords = { x: current.x, y: current.y}; // Start at (0, 0)
+        const tween = new TWEEN.Tween(coords) // Create a new tween that modifies 'coords'.
+          .to({x: destination.x, y: destination.y}, 1500) // Move to (300, 200) in 1 second.
+          .easing(TWEEN.Easing.Circular.Out) // Use an easing function to make the animation smooth.
+          .onUpdate(() => {
+            // Called after tween.js updates 'coords'.
+            window.scrollTo(coords.x, coords.y);
+          })
+          .onComplete(()=>{
+            this.scrollFlag = 1
+          })
+          .start(); // Start the tween immediately.
+      },
+      
+      // 点击导航栏改变样式
+      navActive(){
+          $("#headerInner>nav>ul>li>a").on("click", (e)=>{
+            e.preventDefault()
+            this.scrollFlag = 0
+            // debugger
+            $("#headerInner>nav>ul>li>a").removeClass('active');
+            $(e.currentTarget).addClass("active")
+          });
+      }
   }
 };
 </script>
@@ -410,12 +411,13 @@ header {
             margin-top: 10px;
             width: 0%;
             border-radius: 5px;
-            transition: all 0.8s;
+            transition: all 0.5s;
           }
 
           &:hover { // 使用伪元素实现border动画
             &::after {
               width: 100%;
+              transition: all 0.5s
             }
           }
         }
