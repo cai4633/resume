@@ -19,9 +19,9 @@ export default {
   data() {
     return {
       banners: [
-        "/statics/tech1.jpg",
-        "/statics/tech2.jpg",
-        "/statics/tech3.jpg",
+        "./statics/tech1.jpg",
+        "./statics/tech2.jpg",
+        "./statics/tech3.jpg",
       ],
       swiperOption: {
         pagination: {
